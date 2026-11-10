@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math/rand/v2"
 	"slices"
 	"testing"
@@ -96,14 +97,43 @@ func FuzzInsertionSort(f *testing.F) {
 	})
 }
 
-func BenchmarkInsertionSortClassic(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		InsertionSortClassic([]int{10, 6, 2, 0, 34, 107, 36})
+func benchmarkData(size int, kind string) []int {
+	r := rand.New(rand.NewPCG(uint64(size), 1))
+	arr := make([]int, size)
+	for i := range arr {
+		arr[i] = r.IntN(size * 10)
 	}
+	switch kind {
+	case "sorted":
+		slices.Sort(arr)
+	case "reversed":
+		slices.Sort(arr)
+		slices.Reverse(arr)
+	}
+	return arr
 }
 
-func BenchmarkInsertionSortRange(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		InsertionSortRange([]int{10, 6, 2, 0, 34, 107, 36})
+func BenchmarkInsertionSort(b *testing.B) {
+	sizes := []int{10, 100, 1000, 10000}
+	kinds := []string{"random", "sorted", "reversed"}
+	impls := append(sortCases(), struct {
+		name string
+		fn   func([]int)
+	}{"stdlib", func(arr []int) { slices.Sort(arr) }})
+
+	for _, size := range sizes {
+		for _, kind := range kinds {
+			src := benchmarkData(size, kind)
+			for _, impl := range impls {
+				b.Run(fmt.Sprintf("%s/%s/n=%d", impl.name, kind, size), func(b *testing.B) {
+					b.ReportAllocs()
+					b.ResetTimer()
+					for i := 0; i < b.N; i++ {
+						arr := slices.Clone(src)
+						impl.fn(arr)
+					}
+				})
+			}
+		}
 	}
 }
