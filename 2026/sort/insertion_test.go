@@ -127,9 +127,9 @@ func BenchmarkInsertionSort(b *testing.B) {
 			for _, impl := range impls {
 				b.Run(fmt.Sprintf("%s/%s/n=%d", impl.name, kind, size), func(b *testing.B) {
 					b.ReportAllocs()
-					b.ResetTimer()
-					for i := 0; i < b.N; i++ {
-						arr := slices.Clone(src)
+					arr := make([]int, len(src))
+					for b.Loop() {
+						copy(arr, src) // Работает без новых аллокаций памяти!
 						impl.fn(arr)
 					}
 				})
