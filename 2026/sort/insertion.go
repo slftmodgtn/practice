@@ -1,6 +1,8 @@
 package main
 
-func InsertionSortClassic(arr []int) {
+import "cmp"
+
+func InsertionSortClassic[T cmp.Ordered](arr []T) {
 	for i := 1; i < len(arr); i++ {
 		key := arr[i]
 		j := i - 1
@@ -12,7 +14,7 @@ func InsertionSortClassic(arr []int) {
 	}
 }
 
-func InsertionSortRange(arr []int) {
+func InsertionSortRange[T cmp.Ordered](arr []T) {
 	for i, val := range arr {
 		j := i - 1
 		for j >= 0 && arr[j] > val {
