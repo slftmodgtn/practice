@@ -86,3 +86,19 @@ func testSortRandom[T cmp.Ordered](t *testing.T, r *rand.Rand, gen func(*rand.Ra
 		})
 	}
 }
+
+func benchmarkData(size int, kind string) []int {
+	r := rand.New(rand.NewPCG(uint64(size), 1))
+	arr := make([]int, size)
+	for i := range arr {
+		arr[i] = r.IntN(size * 10)
+	}
+	switch kind {
+	case "sorted":
+		slices.Sort(arr)
+	case "reversed":
+		slices.Sort(arr)
+		slices.Reverse(arr)
+	}
+	return arr
+}

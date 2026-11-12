@@ -1,6 +1,7 @@
 package sort
 
 import (
+	"fmt"
 	"math/rand/v2"
 	"slices"
 	"strings"
@@ -73,5 +74,27 @@ func FuzzInsertionSort(f *testing.F) {
 			}
 		}
 	})
+}
+
+func BenchmarkInsertionSort(b *testing.B) {
+	sizes := []int{10, 100, 1000, 10000}
+	kinds := []string{"random", "sorted", "reversed"}
+	impls := append(sortCases[int](), sortImpl[int]{"stdlib", func(arr []int) { slices.Sort(arr) }})
+
+	for _, size := range sizes {
+		for _, kind := range kinds {
+			src := benchmarkData(size, kind)
+			for _, impl := range impls {
+				b.Run(fmt.Sprintf("%s/%s/n=%d", impl.name, kind, size), func(b *testing.B) {
+					b.ReportAllocs()
+					arr := make([]int, len(src))
+					for b.Loop() {
+						copy(arr, src) // Работает без новых аллокаций памяти!
+						impl.fn(arr)
+					}
+				})
+			}
+		}
+	}
 }
 
