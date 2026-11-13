@@ -21,6 +21,7 @@ type sortImpl[T cmp.Ordered] struct {
 func sortCases[T cmp.Ordered]() []sortImpl[T] {
 	return []sortImpl[T]{
 		{"classic", InsertionSortClassic[T]},
+		{"shift", InsertionSortShift[T]},
 		{"range", InsertionSortRange[T]},
 		{"custom-binary", InsertionSortCustomBinary[T]},
 		{"std-binary", InsertionSortStdBinary[T]},
