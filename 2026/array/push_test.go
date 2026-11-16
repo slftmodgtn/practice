@@ -1,4 +1,4 @@
-package move_elements
+package array
 
 import (
 	"testing"
@@ -11,8 +11,8 @@ func TestArrShifting(t *testing.T) {
 		name string
 		fn   func([arrSize]int, int) (int, [arrSize]int)
 	}{
-		{"arrShiftCycleStraightforward", ArrShiftCycleStraightforward},
-		{"arrShiftCyclingBackword", ArrShiftCyclingBackword},
+		{"PushFront", PushFront},
+		{"PushBack", PushBack},
 	}
 
 	type in struct {
