@@ -2,14 +2,26 @@ package sort
 
 import "cmp"
 
-func SelectionSort[T cmp.Ordered](nums []T) {
-	for i := 0; i < len(nums); i++ {
+// SelectionSort реализует сортировку выбором: на каждой итерации
+// находит минимум в неотсортированной части и меняет его с arr[i].
+// Сложность по времени: O(N^2) всегда, память O(1).
+// Сортировка неустойчива: порядок равных элементов не сохраняется.
+func SelectionSort[T cmp.Ordered](arr []T) {
+	// Последний элемент не обрабатываем: когда i = len(arr)-1,
+	// в неотсортированной части остается один элемент, он уже на месте
+	for i := 0; i < len(arr)-1; i++ {
 		minIndex := i
-		for j := i; j < len(nums); j++ {
-			if nums[j] < nums[minIndex] {
+		// Ищем минимум в неотсортированной части arr[i+1:]
+		// (элемент arr[i] уже кандидат, поэтому начинаем с i+1)
+		for j := i + 1; j < len(arr); j++ {
+			if arr[j] < arr[minIndex] {
 				minIndex = j
 			}
 		}
-		nums[i], nums[minIndex] = nums[minIndex], nums[i]
+		// Если минимум уже на позиции i, swap меняет элемент сам с собой —
+		// пропускаем его, чтобы не делать лишнюю запись в память
+		if minIndex != i {
+			arr[i], arr[minIndex] = arr[minIndex], arr[i]
+		}
 	}
 }
